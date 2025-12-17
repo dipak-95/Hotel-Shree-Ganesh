@@ -15,8 +15,24 @@ app.use(express.json());
 app.use(cors());
 
 // Database Connection
+// Database Connection
+const User = require('./models/User');
+const bcrypt = require('bcryptjs');
+
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/hotel_shree_ganesh')
-    .then(() => console.log('MongoDB Connected'))
+    .then(async () => {
+        console.log('MongoDB Connected');
+
+        // Auto-Seed Admin
+        const adminExists = await User.findOne({ username: 'admin' });
+        if (!adminExists) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash('admin123', salt);
+            const admin = new User({ username: 'admin', password: hashedPassword });
+            await admin.save();
+            console.log('Using Default Admin: admin / admin123');
+        }
+    })
     .catch(err => console.error('MongoDB Connection Error:', err));
 
 // Routes
