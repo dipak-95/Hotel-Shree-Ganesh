@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { API_URL } from '../config';
 
 const AdminDashboard = () => {
     const [bookings, setBookings] = useState([]);
@@ -32,7 +33,7 @@ const AdminDashboard = () => {
     const saveEdit = async () => {
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.put(`http://localhost:5000/api/rooms/${editingRoom}`, editForm, {
+            await axios.put(`${API_URL}/api/rooms/${editingRoom}`, editForm, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             alert("Room Updated Successfully!");
@@ -52,8 +53,8 @@ const AdminDashboard = () => {
             const token = localStorage.getItem('adminToken');
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            const bookingRes = await axios.get('http://localhost:5000/api/bookings', config);
-            const roomRes = await axios.get('http://localhost:5000/api/rooms');
+            const bookingRes = await axios.get(`${API_URL}/api/bookings`, config);
+            const roomRes = await axios.get(`${API_URL}/api/rooms`);
 
             setBookings(bookingRes.data);
             setRooms(roomRes.data);
@@ -68,7 +69,7 @@ const AdminDashboard = () => {
     const handleApprove = async (id) => {
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.put(`http://localhost:5000/api/bookings/${id}/approve`, {}, {
+            await axios.put(`${API_URL}/api/bookings/${id}/approve`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             alert("Booking Approved!");
@@ -82,7 +83,7 @@ const AdminDashboard = () => {
         if (!window.confirm("Are you sure you want to cancel this booking?")) return;
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.put(`http://localhost:5000/api/bookings/${id}/cancel`, {}, {
+            await axios.put(`${API_URL}/api/bookings/${id}/cancel`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchData();
@@ -95,7 +96,7 @@ const AdminDashboard = () => {
         e.preventDefault();
         try {
             const token = localStorage.getItem('adminToken');
-            await axios.post('http://localhost:5000/api/bookings', {
+            await axios.post(`${API_URL}/api/bookings`, {
                 ...offlineForm,
                 source: 'Offline'
             }, {
